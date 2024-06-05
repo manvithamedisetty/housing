@@ -1,0 +1,107 @@
+import warnings
+warnings.filterwarnings('ignore')
+import numpy as np
+import pandas as pd
+
+# Data Visualisation
+
+import matplotlib.pyplot as plt 
+import seaborn as sns
+housing = pd.DataFrame(pd.read_csv("../input/Housing.csv"))
+# Check the head of the dataset
+housing.head()
+housing.info()
+housing.describe()
+# Checking Null values
+housing.isnull().sum()*100/housing.shape[0]
+# There are no NULL values in the dataset, hence it is clean.
+# Outlier Analysis
+fig, axs = plt.subplots(2,3, figsize = (10,5))
+plt1 = sns.boxplot(housing['price'], ax = axs[0,0])
+plt2 = sns.boxplot(housing['area'], ax = axs[0,1])
+plt3 = sns.boxplot(housing['bedrooms'], ax = axs[0,2])
+plt1 = sns.boxplot(housing['bathrooms'], ax = axs[1,0])
+plt2 = sns.boxplot(housing['stories'], ax = axs[1,1])
+plt3 = sns.boxplot(housing['parking'], ax = axs[1,2])
+
+plt.tight_layout()
+# Outlier Treatment
+# Price and area have considerable outliers.
+# We can drop the outliers as we have sufficient data.
+# outlier treatment for price
+plt.boxplot(housing.price)
+Q1 = housing.price.quantile(0.25)
+Q3 = housing.price.quantile(0.75)
+IQR = Q3 - Q1
+housing = housing[(housing.price >= Q1 - 1.5*IQR) & (housing.price <= Q3 + 1.5*IQR)]
+# outlier treatment for area
+plt.boxplot(housing.area)
+Q1 = housing.area.quantile(0.25)
+Q3 = housing.area.quantile(0.75)
+IQR = Q3 - Q1
+housing = housing[(housing.area >= Q1 - 1.5*IQR) & (housing.area <= Q3 + 1.5*IQR)]
+# Outlier Analysis
+fig, axs = plt.subplots(2,3, figsize = (10,5))
+plt1 = sns.boxplot(housing['price'], ax = axs[0,0])
+plt2 = sns.boxplot(housing['area'], ax = axs[0,1])
+plt3 = sns.boxplot(housing['bedrooms'], ax = axs[0,2])
+plt1 = sns.boxplot(housing['bathrooms'], ax = axs[1,0])
+plt2 = sns.boxplot(housing['stories'], ax = axs[1,1])
+plt3 = sns.boxplot(housing['parking'], ax = axs[1,2])
+
+plt.tight_layout()
+sns.pairplot(housing)
+plt.show()
+plt.figure(figsize=(20, 12))
+plt.subplot(2,3,1)
+sns.boxplot(x = 'mainroad', y = 'price', data = housing)
+plt.subplot(2,3,2)
+sns.boxplot(x = 'guestroom', y = 'price', data = housing)
+plt.subplot(2,3,3)
+sns.boxplot(x = 'basement', y = 'price', data = housing)
+plt.subplot(2,3,4)
+sns.boxplot(x = 'hotwaterheating', y = 'price', data = housing)
+plt.subplot(2,3,5)
+sns.boxplot(x = 'airconditioning', y = 'price', data = housing)
+plt.subplot(2,3,6)
+sns.boxplot(x = 'furnishingstatus', y = 'price', data = housing)
+plt.show()
+plt.figure(figsize = (10, 5))
+sns.boxplot(x = 'furnishingstatus', y = 'price', hue = 'airconditioning', data = housing)
+plt.show()
+varlist =  ['mainroad', 'guestroom', 'basement', 'hotwaterheating', 'airconditioning', 'prefarea']
+
+# Defining the map function
+def binary_map(x):
+    return x.map({'yes': 1, "no": 0})
+
+# Applying the function to the housing list
+housing[varlist] = housing[varlist].apply(binary_map)
+# Check the housing dataframe now
+
+housing.head()
+status = pd.get_dummies(housing['furnishingstatus'])
+# Check what the dataset 'status' looks like
+status.head()
+num_vars = ['area','stories', 'bathrooms', 'airconditioning', 'prefarea','parking','price']
+df_test[num_vars] = scaler.fit_transform(df_test[num_vars])
+y_test = df_test.pop('price')
+X_test = df_test
+# Adding constant variable to test dataframe
+X_test = sm.add_constant(X_test)
+# Now let's use our model to make predictions.
+# Creating X_test_new dataframe by dropping variables from X_test
+X_test_rfe = X_test[X_train_rfe.columns]
+# Making predictions
+y_pred = lm.predict(X_test_rfe)
+from sklearn.metrics import r2_score 
+r2_score(y_test, y_pred)
+# Plotting y_test and y_pred to understand the spread.
+fig = plt.figure()
+plt.scatter(y_test,y_pred)
+fig.suptitle('y_test vs y_pred', fontsize=20)              
+# Plot heading 
+plt.xlabel('y_test', fontsize=18)                          
+# X-label
+plt.ylabel('y_pred', fontsize=16)                          
+# Y-label
